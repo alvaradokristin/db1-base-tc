@@ -58,11 +58,6 @@ export class AddZoo extends Component {
                     <label htmlFor="zooSite" className="form-label">Sitio web del zoologico:</label>
                     <input type="text" name="zooSite" className="form-control" id="zooSite" autoComplete="off" onChange={this.handleChange} />
                 </div>
-                {/* Example of the form from React website
-                <label>
-                    Name:
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
-                </label> */}
                 <input type="submit" value="Agregar Zoologico" className="btn btn-outline-success" />
             </form>
         );
