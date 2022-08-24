@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using bd_dotnet_backend.Models;
+using bd_dotnet_backend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
+builder.Services.AddDbContext<ZooDb>(opt => opt.UseInMemoryDatabase("TodoList"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
@@ -15,16 +17,16 @@ app.UseCors("corspolicy");
 
 app.MapGet("/", () => "The API is active");
 
-app.MapGet("/zooitems", async (TodoDb db) =>
+app.MapGet("/zooitems", async (ZooDb db) =>
     await db.Todos.ToListAsync());
 
-app.MapGet("/zooitems/{id}", async (int id, TodoDb db) =>
+app.MapGet("/zooitems/{id}", async (int id, ZooDb db) =>
     await db.Todos.FindAsync(id)
         is Todo todo
             ? Results.Ok(todo)
             : Results.NotFound());
 
-app.MapPost("/zooitems", async (Todo todo, TodoDb db) =>
+app.MapPost("/zooitems", async (Todo todo, ZooDb db) =>
 {
     db.Todos.Add(todo);
     await db.SaveChangesAsync();
@@ -32,7 +34,7 @@ app.MapPost("/zooitems", async (Todo todo, TodoDb db) =>
     return Results.Created($"/zooitems/{todo.Id}", todo);
 });
 
-app.MapPut("/zooitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
+app.MapPut("/zooitems/{id}", async (int id, Todo inputTodo, ZooDb db) =>
 {
     var todo = await db.Todos.FindAsync(id);
 
@@ -48,7 +50,7 @@ app.MapPut("/zooitems/{id}", async (int id, Todo inputTodo, TodoDb db) =>
     return Results.NoContent();
 });
 
-app.MapDelete("/zooitems/{id}", async (int id, TodoDb db) =>
+app.MapDelete("/zooitems/{id}", async (int id, ZooDb db) =>
 {
     if (await db.Todos.FindAsync(id) is Todo todo)
     {
@@ -61,20 +63,3 @@ app.MapDelete("/zooitems/{id}", async (int id, TodoDb db) =>
 });
 
 app.Run();
-
-class Todo
-{
-    public int Id { get; set; }
-    public string? Pais { get; set; }
-    public string? Nombre { get; set; }
-    public string? Telefono { get; set; }
-    public string? Sitio { get; set; }
-}
-
-class TodoDb : DbContext
-{
-    public TodoDb(DbContextOptions<TodoDb> options)
-        : base(options) { }
-
-    public DbSet<Todo> Todos => Set<Todo>();
-}

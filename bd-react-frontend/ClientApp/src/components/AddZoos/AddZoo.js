@@ -34,7 +34,7 @@ export class AddZoo extends Component {
         // sent the data as json to the server API
         createZoo(this.state.zoo)
             .then(response => {
-                handleSaveToPC(response, `submission_${response.nombre}`);
+                handleSaveToPC(response, `submission-${response.nombre.replace(/ /g, "_")}`);
             });
 
         // clear the input spaces
